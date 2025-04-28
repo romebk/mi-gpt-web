@@ -1,146 +1,142 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PsyBot - Chatbot Psicológico</title>
-    <!-- Tailwind CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <!-- jsPDF para exportación a PDF -->
-    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-    <!-- Font Awesome para iconos -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/all.min.css">
-    <style>
-        :root { --primary-color: #3498db; --secondary-color: #2ecc71; --bg-color: #f8fafc; --user-msg: #e1f5fe; --bot-msg: #e8f5e9; --text-color: #2c3e50; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-color); min-height: 100vh; margin:0; }
-        .chat-container { max-width: 800px; margin: 0 auto; background: #fff; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); overflow: hidden; }
-        .chat-header { background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: #fff; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; }
-        .chat-messages { padding: 20px; max-height: 50vh; overflow-y: auto; }
-        .message { margin-bottom: 15px; max-width: 80%; padding: 12px 15px; border-radius: 18px; word-wrap: break-word; }
-        .user-message { background-color: var(--user-msg); margin-left: auto; border-bottom-right-radius: 5px; }
-        .bot-message { background-color: var(--bot-msg); margin-right: auto; border-bottom-left-radius: 5px; }
-        .emotion-indicator { width: 30px; height: 30px; font-size: 24px; display: inline-flex; align-items: center; justify-content: center; margin-right: 10px; }
-        .input-area { display: flex; border-top:1px solid #e0e0e0; background:#fff; padding:10px; }
-        .input-area textarea { flex:1; padding:12px; border:1px solid #ddd; border-radius:25px; resize:none; outline:none; }
-        .input-area button { background: var(--primary-color); color:#fff; border:none; border-radius:25px; padding:10px 20px; margin-left:10px; cursor:pointer; }
-        .tabs { display:flex; background:#f1f5f9; }
-        .tab { padding:10px 20px; cursor:pointer; }
-        .tab.active { background:#fff; border-bottom:2px solid var(--primary-color); }
-        .tab-content { display:none; }
-        .tab-content.active { display:block; }
-        .resources-container { padding:20px; }
-        .resource-item { background:#fff; padding:12px 15px; border-radius:8px; margin-bottom:10px; box-shadow:0 2px 4px rgba(0,0,0,0.05); cursor:pointer; }
-        .resource-type { padding:3px 8px; border-radius:12px; font-size:.7em; margin-left:10px; }
-        .pdf-type { background:#ffecb3; color:#ff8f00; }
-        .link-type { background:#e1f5fe; color:#0288d1; }
-        .timestamp { font-size:.7em; color:#999; display:block; margin-top:5px; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PsyBot - Chatbot Psicológico</title>
+  <!-- Tailwind CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <!-- jsPDF para exportación a PDF -->
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <!-- Font Awesome para iconos -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/all.min.css">
+  <style>
+    :root { --primary-color:#3498db; --secondary-color:#2ecc71; --bg-color:#f8fafc; --user-msg:#e1f5fe; --bot-msg:#e8f5e9; --text-color:#2c3e50; }
+    body { margin:0; font-family:Segoe UI,Tahoma,Verdana,sans-serif; background:var(--bg-color); color:var(--text-color); }
+    .chat-container { max-width:800px; margin:40px auto; background:#fff; border-radius:12px; box-shadow:0 4px 6px rgba(0,0,0,0.1); overflow:hidden; }
+    .chat-header { background:linear-gradient(135deg,var(--primary-color),var(--secondary-color)); color:#fff; padding:15px; display:flex; align-items:center; justify-content:space-between; }
+    .chat-messages { padding:20px; height:50vh; overflow-y:auto; }
+    .message { margin-bottom:15px; padding:12px 15px; border-radius:18px; max-width:80%; word-break:break-word; }
+    .user-message { background:var(--user-msg); margin-left:auto; border-bottom-right-radius:5px; }
+    .bot-message { background:var(--bot-msg); margin-right:auto; border-bottom-left-radius:5px; }
+    .emotion-indicator { width:30px; height:30px; display:inline-flex; align-items:center; justify-content:center; margin-right:10px; font-size:24px; }
+    .input-area { display:flex; padding:10px; border-top:1px solid #e0e0e0; background:#fff; }
+    .input-area textarea { flex:1; padding:12px; border:1px solid #ddd; border-radius:25px; outline:none; resize:none; }
+    .input-area button { background:var(--primary-color); color:#fff; border:none; border-radius:25px; padding:10px 20px; margin-left:10px; cursor:pointer; }
+    .tabs { display:flex; background:#f1f5f9; }
+    .tab { padding:10px 20px; cursor:pointer; }
+    .tab.active { background:#fff; border-bottom:2px solid var(--primary-color); }
+    .tab-content { display:none; }
+    .tab-content.active { display:block; }
+    .resources-container { padding:20px; }
+    .resource-item { background:#fff; padding:12px; border-radius:8px; margin-bottom:10px; box-shadow:0 2px 4px rgba(0,0,0,0.05); }
+    .resource-item a { display:flex; justify-content:space-between; align-items:center; text-decoration:none; color:inherit; }
+    .resource-type { padding:3px 8px; border-radius:12px; font-size:.75em; }
+    .pdf-type { background:#ffecb3; color:#ff8f00; }
+    .link-type { background:#e1f5fe; color:#0288d1; }
+    .timestamp { font-size:.7em; color:#999; margin-top:5px; display:block; }
+  </style>
 </head>
 <body>
-    <div class="chat-container">
-        <div class="chat-header">
-            <div class="flex items-center">
-                <div class="emotion-indicator" id="main-emotion">😐</div>
-                <h1 class="text-xl font-bold">PsyBot</h1>
-            </div>
-            <button class="menu-button" id="export-chat"><i class="fas fa-download"></i></button>
-        </div>
-        <div class="tabs">
-            <div class="tab active" data-target="chat-content">Chat</div>
-            <div class="tab" data-target="resources-content">Recursos</div>
-            <div class="tab" data-target="about-content">Acerca de</div>
-        </div>
-        <!-- Chat -->
-        <div class="tab-content active" id="chat-content">
-            <div class="chat-messages" id="chat-history"></div>
-            <div class="input-area">
-                <textarea id="user-input" rows="2" placeholder="Escribe tu mensaje..."></textarea>
-                <button id="send-button"><i class="fas fa-paper-plane"></i> Enviar</button>
-            </div>
-        </div>
-        <!-- Recursos -->
-        <div class="tab-content" id="resources-content">
-            <div class="resources-container">
-                <h2 class="text-xl font-bold mb-4">Recursos</h2>
-                <div id="resource-suggestions"></div>
-            </div>
-        </div>
-        <!-- About -->
-        <div class="tab-content" id="about-content" style="padding:20px;">
-            <h2 class="text-2xl font-bold mb-4">Acerca de PsyBot</h2>
-            <p>PsyBot es un chatbot... etc.</p>
-            <div class="disclaimer" style="padding:15px; background:#fff8e1; border-left:4px solid #ffc107;">
-                <strong>Descargo:</strong> No reemplaza atención profesional.
-            </div>
-        </div>
+  <div class="chat-container">
+    <div class="chat-header">
+      <div class="flex items-center">
+        <div class="emotion-indicator" id="main-emotion">😐</div>
+        <h1 class="text-xl font-bold">PsyBot</h1>
+      </div>
     </div>
-    <script>
-        const resourceLibrary = {
-            SAD: [ { title: "Técnicas para manejar la tristeza", type: "PDF", url: "#" }, { title: "Ejercicios de gratitud diaria", type: "LINK", url: "#" } ],
-            ANXIOUS: [ { title: "Ejercicios de respiración", type: "PDF", url: "#" }, { title: "Meditación guiada", type: "LINK", url: "#" } ],
-            HAPPY: [ { title: "Cómo mantener emociones positivas", type: "PDF", url: "#" }, { title: "Prácticas para el bienestar", type: "LINK", url: "#" } ],
-            NEUTRAL: [ { title: "Recursos generales", type: "PDF", url: "#" }, { title: "Guía de autoestima", type: "LINK", url: "#" } ]
-        };
-        const welcomeMessage = "¡Hola! Soy PsyBot, tu asistente emocional. ¿Cómo te sientes hoy?";
-        let currentEmotion = "NEUTRAL";
-
-        document.addEventListener('DOMContentLoaded', () => {
-            // Tab switching
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    document.querySelectorAll('.tab, .tab-content').forEach(el => el.classList.remove('active'));
-                    tab.classList.add('active');
-                    document.getElementById(tab.dataset.target).classList.add('active');
-                    if (tab.dataset.target === 'resources-content') displayResources(currentEmotion);
-                });
-            });
-            // Load history or welcome
-            loadChatHistory();
-            if (!getHistory().length) displayBotMessage(welcomeMessage);
-            displayResources(currentEmotion);
-            // Events
-            document.getElementById('send-button').addEventListener('click', sendMessage);
-            document.getElementById('user-input').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }});
-            document.getElementById('export-chat').addEventListener('click', exportChatToPDF);
+    <div class="tabs">
+      <div class="tab active" data-target="chat-content">Chat</div>
+      <div class="tab" data-target="resources-content">Recursos</div>
+      <div class="tab" data-target="about-content">Acerca de</div>
+    </div>
+    <div id="chat-content" class="tab-content active">
+      <div id="chat-history" class="chat-messages"></div>
+      <div class="input-area">
+        <textarea id="user-input" rows="2" placeholder="Escribe tu mensaje..."></textarea>
+        <button id="send-button"><i class="fas fa-paper-plane"></i> Enviar</button>
+      </div>
+    </div>
+    <div id="resources-content" class="tab-content">
+      <div class="resources-container">
+        <h2 class="text-xl font-bold mb-4">Recursos</h2>
+        <div id="resource-suggestions"></div>
+      </div>
+    </div>
+    <div id="about-content" class="tab-content" style="padding:20px;">
+      <h2 class="text-2xl font-bold mb-4">Acerca de PsyBot</h2>
+      <p>PsyBot es un chatbot psicológico diseñado para ofrecer apoyo emocional. No reemplaza atención profesional.</p>
+    </div>
+  </div>
+  <script>
+    // URLs crudas para PDFs en GitHub
+    const base = 'https://raw.githubusercontent.com/romebk/mi-gpt-web/main/resources';
+    const resourceLibrary = {
+      SAD: [
+        { title:'Técnicas para manejar la tristeza', type:'PDF', url:`${base}/tecnicas-manejar-la-tristeza.pdf` },
+        { title:'Ejercicios de gratitud diaria', type:'PDF', url:`${base}/ejercicios-gratitud-diaria.pdf` }
+      ],
+      ANXIOUS: [
+        { title:'Ejercicios de respiración', type:'PDF', url:`${base}/ejercicios-respiracion.pdf` }
+      ],
+      HAPPY: [
+        { title:'Cómo mantener emociones positivas', type:'PDF', url:`${base}/mantener-emociones-positivas.pdf` }
+      ],
+      NEUTRAL: [
+        { title:'Recursos generales', type:'PDF', url:`${base}/recursos-generales-bienestar.pdf` }
+      ]
+    };
+    const welcomeMessage = '¡Hola! Soy PsyBot, tu asistente emocional. ¿Cómo te sientes hoy?';
+    let currentEmotion = 'NEUTRAL';
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.tab, .tab-content').forEach(e=>e.classList.remove('active'));
+          tab.classList.add('active');
+          document.getElementById(tab.dataset.target).classList.add('active');
+          if(tab.dataset.target==='resources-content') displayResources(currentEmotion);
         });
-
-        function getHistory() { return JSON.parse(localStorage.getItem('chatHistory')||'[]'); }
-        function saveHistory(history){ localStorage.setItem('chatHistory', JSON.stringify(history)); }
-
-        function sendMessage() {
-            const input = document.getElementById('user-input');
-            const text = input.value.trim(); if (!text) return;
-            displayUserMessage(text); input.value = '';
-            showTypingIndicator();
-            fetch('/api/gpt', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({prompt:text}) })
-                .then(r=>r.json()).then(data => {
-                    hideTypingIndicator();
-                    if (data.error) { console.error(data.error); return displayBotMessage('Lo siento, falló el servidor'); }
-                    const emo = detectEmotion(text); currentEmotion = emo; updateEmotionIndicator(emo);
-                    displayBotMessage(data.message); displayResources(emo);
-                }).catch(err => { hideTypingIndicator(); console.error(err); displayBotMessage('No se pudo conectar'); });
-        }
-
-        function displayUserMessage(msg){ appendMessage(msg,'user-message'); saveMessage('user',msg); }
-        function displayBotMessage(msg){ appendMessage(msg,'bot-message', getEmojiForEmotion(currentEmotion)); saveMessage('bot',msg,currentEmotion); }
-        function appendMessage(text,cls,emoji){
-            const cont=document.createElement('div'); cont.className='message '+cls;
-            const inner = emoji ? `<div class=\"flex items-start\"><div class=\"emotion-indicator\">${emoji}</div><div>${text}</div></div>` : text;
-            cont.innerHTML = inner + `<span class="timestamp">${new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</span>`;
-            const history = document.getElementById('chat-history'); history.appendChild(cont); history.scrollTop = history.scrollHeight;
-        }
-        function saveMessage(role,text,emo){ const h=getHistory(); h.push({role,content:text,timestamp:new Date().toISOString(),emotion: role==='bot'?emo:null}); saveHistory(h); }
-        function loadChatHistory(){ const h=getHistory(); const histEl=document.getElementById('chat-history'); histEl.innerHTML=''; h.forEach(m=>{ if(m.role==='user') displayUserMessage(m.content); else{ currentEmotion=m.emotion||'NEUTRAL'; displayBotMessage(m.content);} }); }
-        function showTypingIndicator(){ const ind=document.createElement('div'); ind.id='typing-indicator'; ind.className='message bot-message'; ind.textContent='PsyBot está escribiendo…'; document.getElementById('chat-history').appendChild(ind); }
-        function hideTypingIndicator(){ const ind=document.getElementById('typing-indicator'); if(ind) ind.remove(); }
-
-        function detectEmotion(msg){ const l=msg.toLowerCase(); const sad= l.match(/\b(triste|deprimido|llorar|solo)\b/g)||[]; const anx= l.match(/\b(ansie|nervios|miedo|pánico)\b/g)||[]; const happy= l.match(/\b(feliz|content|alegr|genial)\b/g)||[]; if(sad.length>anx.length&&sad.length>happy.length) return 'SAD'; if(anx.length>sad.length&&anx.length>happy.length) return 'ANXIOUS'; if(happy.length>sad.length&&happy.length>anx.length) return 'HAPPY'; return 'NEUTRAL'; }
-        function updateEmotionIndicator(e){ document.getElementById('main-emotion').textContent=getEmojiForEmotion(e); }
-        function getEmojiForEmotion(e){ return {'SAD':'😢','ANXIOUS':'😨','HAPPY':'😊','NEUTRAL':'😐'}[e]||'😐'; }
-
-        function displayResources(emotion){ const container=document.getElementById('resource-suggestions'); container.innerHTML=''; (resourceLibrary[emotion]||[]).forEach(r=>{ const el=document.createElement('div'); el.className='resource-item'; el.innerHTML=`<span>${r.title}</span><span class="resource-type ${r.type.toLowerCase()}-type">${r.type}</span>`; el.onclick=()=>window.open(r.url,'_blank'); container.appendChild(el); }); }
-
-        function exportChatToPDF(){ const { jsPDF } = window.jspdf; const doc=new jsPDF(); let y=20; doc.setFontSize(16); doc.text('PsyBot - Conversación',20,y); doc.setFontSize(12); getHistory().forEach(m=>{ y+=8; doc.text((m.role==='user'?'Tú: ':'PsyBot: ')+m.content,20,y); if(y>270){ doc.addPage(); y=20; } }); doc.save('PsyBot-Conversacion.pdf'); }
-    </script>
+      });
+      loadHistory();
+      if(!getHistory().length) displayBot(welcomeMessage);
+      displayResources(currentEmotion);
+      document.getElementById('send-button').addEventListener('click', sendMessage);
+      document.getElementById('user-input').addEventListener('keydown', e=>{
+        if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}
+      });
+    });
+    function getHistory(){return JSON.parse(localStorage.getItem('chatHistory')||'[]');}
+    function saveHistory(h){localStorage.setItem('chatHistory',JSON.stringify(h));}
+    async function sendMessage(){
+      const input=document.getElementById('user-input'); const text=input.value.trim(); if(!text) return;
+      displayUser(text); input.value='';
+      showTyping();
+      try{
+        const res=await fetch('/api/gpt',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:text})});
+        const data=await res.json(); hideTyping();
+        if(data.error){ displayBot('Error servidor'); return; }
+        const emo=detectEmotion(text); currentEmotion=emo; updateMain(emo);
+        displayBot(data.message);
+        displayResources(emo);
+      }catch(e){hideTyping(); displayBot('No se pudo conectar');}
+    }
+    function append(cls,content,emoji){
+      const el=document.createElement('div'); el.className='message '+cls;
+      let html=content;
+      if(emoji) html=`<div class=\"flex items-start\"><div class=\"emotion-indicator\">${emoji}</div><div>${content}</div></div>`;
+      el.innerHTML=html+`<span class="timestamp">${new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</span>`;
+      document.getElementById('chat-history').appendChild(el);
+      document.getElementById('chat-history').scrollTop=document.getElementById('chat-history').scrollHeight;
+    }
+    function displayUser(msg){append('user-message',msg); let h=getHistory();h.push({role:'user',content:msg,timestamp:new Date().toISOString()});saveHistory(h);}
+    function displayBot(msg){append('bot-message',msg,getEmoji(currentEmotion)); let h=getHistory();h.push({role:'bot',content:msg,timestamp:new Date().toISOString(),emotion:currentEmotion});saveHistory(h);}
+    function showTyping(){displayBot('PsyBot está escribiendo…');}
+    function hideTyping(){const all=document.querySelectorAll('.bot-message');all[all.length-1].remove();}
+    function detectEmotion(m){const l=m.toLowerCase();const sad=(l.match(/\b(triste|deprimido|llorar|solo)\b/g)||[]).length;const anx=(l.match(/\b(ansie|nervios|miedo)\b/g)||[]).length;const hap=(l.match(/\b(feliz|bien|alegr)\b/g)||[]).length; if(sad>anx&&sad>hap)return 'SAD';if(anx>sad&&anx>hap)return 'ANXIOUS';if(hap>sad&&hap>anx)return 'HAPPY';return 'NEUTRAL';}
+    function updateMain(e){document.getElementById('main-emotion').textContent=getEmoji(e);}    
+    function getEmoji(e){return{'SAD':'😢','ANXIOUS':'😨','HAPPY':'😊','NEUTRAL':'😐'}[e];}
+    function displayResources(e){const c=document.getElementById('resource-suggestions');c.innerHTML='';(resourceLibrary[e]||[]).forEach(r=>{const div=document.createElement('div');div.className='resource-item';div.innerHTML=`<a href="${r.url}" download><span>${r.title}</span><span class="resource-type pdf-type">PDF</span></a>`;c.appendChild(div);});}
+    function loadHistory(){const h=getHistory();h.forEach(m=>{ if(m.role==='user')displayUser(m.content);else{currentEmotion=m.emotion;displayBot(m.content);} });}
+  </script>
 </body>
 </html>
